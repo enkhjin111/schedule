@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Checklist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            color: #000;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        .menu {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .menu button {
+            font-size: 1rem;
+            padding: 10px 20px;
+            margin: 0 10px;
+            background-color: transparent;
+            color: #000;
+            border: 2px solid #000;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        .menu button:hover {
+            background-color: #000;
+            color: #fff;
+        }
+        .schedule {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 10px;
+        }
+        .day {
+            background: transparent;
+            border: 2px solid #000;
+            padding: 20px;
+            text-align: left;
+        }
+        .day h2 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+        }
+        .day ul {
+            list-style: none;
+            padding: 0;
+        }
+        .day ul li {
+            margin: 10px 0;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .day ul li input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        .day ul li.checked {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <h1>Schedule Checklist</h1>
+    <div class="menu">
+        <button onclick="loadSchedule('daily')">Daily</button>
+        <button onclick="loadSchedule('weekly')">Weekly</button>
+        <button onclick="loadSchedule('monthly')">Monthly</button>
+    </div>
+    <div class="schedule"></div>
+
+    <script>
+        const scheduleContainer = document.querySelector('.schedule');
+
+        function clearSchedule() {
+            scheduleContainer.innerHTML = '';
+        }
+
+        function loadSchedule(type) {
+            clearSchedule();
+            const today = new Date();
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+
+            if (type === 'daily') {
+                createDay(today, options);
+            } else if (type === 'weekly') {
+                for (let i = 0; i < 7; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() + i);
+                    createDay(date, options);
+                }
+            } else if (type === 'monthly') {
+                const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+                for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+                    createDay(date, options);
+                }
+            }
+        }
+
+        function createDay(date, options) {
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'day';
+            dayDiv.innerHTML = `
+                <h2>${date.toLocaleDateString('en-US', options)}</h2>
+                <ul>
+                    <li><input type="checkbox" onclick="markChecked(this)"> 8:00 AM - Wake up</li>
+                    <li><input type="checkbox" onclick="markChecked(this)"> 9:00 AM - Breakfast</li>
+                    <li><input type="checkbox" onclick="markChecked(this)"> 12:00 PM - Lunch</li>
+                    <li><input type="checkbox" onclick="markChecked(this)"> 6:00 PM - Dinner</li>
+                    <li><input type="checkbox" onclick="markChecked(this)"> 10:00 PM - Relax</li>
+                </ul>
+            `;
+            scheduleContainer.appendChild(dayDiv);
+        }
+
+        function markChecked(checkbox) {
+            if (checkbox.checked) {
+                checkbox.parentElement.classList.add('checked');
+                checkbox.disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>
